@@ -16,15 +16,14 @@ map<string> createdTasks = {};
 # bound to port `9090`.
 service /manage on new http:Listener(9090) {
 
-    resource function post tasks(http:Headers headers, Task task) returns string|http:BadRequest|error {
+    resource function post tasks(http:Headers headers, Task task) returns Task|http:BadRequest|error {
         
         string|http:BadRequest username = check resolveUsernameFromHeaders(headers);
         if (username is http:BadRequest) {
             return username;
         }
         
-        string taskId = check createTask(username, task);
-        return taskId;
+        return createTask(username, task);
     }
 
     resource function get tasks(http:Headers headers) returns Task[]|http:BadRequest|error {
@@ -160,7 +159,7 @@ function getAssignedTasks(string username) returns Task[]|error {
     return assignedTaskList;
 }
 
-function createTask(string createdUser, Task task) returns string|error {
+function createTask(string createdUser, Task task) returns Task {
 
     string? taskId = task.id;
     if (taskId == ()) {
@@ -169,5 +168,5 @@ function createTask(string createdUser, Task task) returns string|error {
     }
     tasks[<string> taskId] = task;
     createdTasks[<string> taskId] = createdUser;
-    return taskId ?: error("Error while creating the task");
+    return <Task> tasks[<string> taskId];
 }
