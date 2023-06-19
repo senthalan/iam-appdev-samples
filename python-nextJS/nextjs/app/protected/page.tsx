@@ -1,4 +1,7 @@
-import { SessionProvider } from "next-auth/react"
+/* eslint-disable react-hooks/exhaustive-deps */
+"use client"
+import { useSession, signIn } from "next-auth/react"
+import { useEffect } from "react";
 
 interface AppProps {
     Component: React.ComponentType
@@ -7,18 +10,17 @@ interface AppProps {
     }
 }
 
-// export default function App({
-//     children,
-//     pageProps: { session, ...pageProps },
-// }: AppProps) {
-//     return (
-//         <SessionProvider session={session}>
-//             <Component {...pageProps} />
-//         </SessionProvider>
-//     )
-// }
-
 export default function AuthenticatedPage() {
+      const { data: session, status } = useSession()
+
+  if (status === "loading") {
+    return <p>Loading...</p>
+  }
+
+  if (status === "unauthenticated") {
+    return <p>Access Denied. Click <a href="/">here to login.</a></p>
+  }
+
     return (
         <h1>Protected Page</h1>
     )
