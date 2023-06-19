@@ -1,6 +1,6 @@
 import ballerina/http;
 import ballerina/uuid;
-import ballerina/jwt;
+// import ballerina/jwt;
 
 type Task record {|
     string id?;
@@ -110,30 +110,32 @@ service /me on new http:Listener(9091) {
 }
 
 function resolveUsernameFromHeaders(http:Headers headers) returns string|http:BadRequest|error {
-    
-    string|error jwtAssertion = headers.getHeader("x-jwt-assertion");
-    if (jwtAssertion is error) {
-        http:BadRequest badRequest = {
-            body: {
-                "error": "Bad Request",
-                "error_description": "Error while getting the JWT token"
-            }
-        };
-        return badRequest;
-    }
 
-    [jwt:Header, jwt:Payload] [_, payload] = check jwt:decode(jwtAssertion);
-    string? username = payload.sub;
-    if (username == ()) {
-        http:BadRequest badRequest = {
-            body: {
-                "error": "Bad Request",
-                "error_description": "Error while getting the username from the JWT token"
-            }
-        };
-        return badRequest;
-    }
-    return <string> username;
+    return "test@abc.com";
+    
+    // string|error jwtAssertion = headers.getHeader("x-jwt-assertion");
+    // if (jwtAssertion is error) {
+    //     http:BadRequest badRequest = {
+    //         body: {
+    //             "error": "Bad Request",
+    //             "error_description": "Error while getting the JWT token"
+    //         }
+    //     };
+    //     return badRequest;
+    // }
+
+    // [jwt:Header, jwt:Payload] [_, payload] = check jwt:decode(jwtAssertion);
+    // string? username = payload.sub;
+    // if (username == ()) {
+    //     http:BadRequest badRequest = {
+    //         body: {
+    //             "error": "Bad Request",
+    //             "error_description": "Error while getting the username from the JWT token"
+    //         }
+    //     };
+    //     return badRequest;
+    // }
+    // return <string> username;
 }
 
 function getCreatedTasks(string username) returns  Task[]|error {
