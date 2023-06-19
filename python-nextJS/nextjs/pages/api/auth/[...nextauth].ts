@@ -1,17 +1,15 @@
 
 import NextAuth, { NextAuthOptions } from "next-auth"
-import { JWT, JWTDecodeParams, JWTEncodeParams, getToken } from "next-auth/jwt";
-import axios, { AxiosError } from "axios";
-import { redirect } from "next/navigation";
 import jwtDecode from "jwt-decode";
+import { randomBytes, randomUUID } from "crypto";
+import { Sequelize } from "sequelize";
+import SequelizeAdapter from "@next-auth/sequelize-adapter";
 
-declare module "next-auth/jwt" {
-    interface JWT {
-        provider: string;
-        idToken: string;
-        accessToken: string;
-    }
-}
+const sequelize = new Sequelize("sqlite::memory:")
+const adapter = SequelizeAdapter(sequelize)
+
+// Calling sync() is not recommended in production
+sequelize.sync()
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -42,9 +40,24 @@ export const authOptions: NextAuthOptions = {
             },
         },
     ],
+    adapter: SequelizeAdapter(sequelize),
     secret: process.env.NEXTAUTH_SECRET,
     session: {
-        strategy: "jwt",
+        strategy: "database",
+
+        // Seconds - How long until an idle session expires and is no longer valid.
+        maxAge: 30 * 24 * 60 * 60, // 30 days
+
+        // Seconds - Throttle how frequently to write to database to extend a session.
+        // Use it to limit write operations. Set to 0 to always update the database.
+        // Note: This option is ignored if using JSON Web Tokens
+        updateAge: 24 * 60 * 60, // 24 hours
+        
+        // The session token is usually either a random UUID or string, however if you
+        // need a more customized session token string, you can define your own generate function.
+        generateSessionToken: () => {
+            return randomUUID?.() ?? randomBytes(32).toString("hex")
+        }
     },
     callbacks: {
         async signIn({ user, account, profile, email, credentials }: any) {
