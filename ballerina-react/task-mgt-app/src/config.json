@@ -1,7 +1,12 @@
 {
-    "clientID": "",
-    "baseUrl": "",
+    "baseUrl": "https://api.asgardeo.io/t/mevanprodxghoc",
+    "clientID": "CqweInNLmQ1hF4gXEZTQcBRGtw0a",
+    "scope": [
+        "openid",
+        "profile", "urn:mevanprodxghoc:taskmanagementservicemana:manage:create_tasks",
+        "urn:mevanprodxghoc:taskmanagementservicemana:manage:view_tasks",
+        "urn:mevanprodxghoc:taskmanagementservicemefa:me:view_tasks"
+    ],
     "signInRedirectURL": "https://localhost:3000",
-    "signOutRedirectURL": "https://localhost:3000",
-    "scope": ["profile"]
+    "signOutRedirectURL": "https://localhost:3000"
 }

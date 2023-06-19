@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { Task } from "../types/task";
+import { Task } from "../type/task";
 import { getTaskManageInstance } from "./instance";
 
 export async function postTask(accessToken: string, payload?: Task) {

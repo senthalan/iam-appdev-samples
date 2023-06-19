@@ -16,9 +16,13 @@
  * under the License.
  */
 
-import { BasicUserInfo } from "@asgardeo/auth-react";
-import React, { FunctionComponent, ReactElement } from "react";
-import { JsonViewer } from '@textea/json-viewer'
+import { BasicUserInfo, useAuthContext } from "@asgardeo/auth-react";
+import React, { FunctionComponent, ReactElement, useState } from "react";
+import { Box, Tab, Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Snackbar, Alert } from "@mui/material";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { postTask } from "../api/manage/create-task";
+import { Task } from "../api/type/task";
+import { ListTasks } from "./list-tasks";
 
 /**
  * Decoded ID Token Response component Prop types interface.
@@ -49,6 +53,19 @@ export interface DerivedAuthenticationResponseInterface {
     decodedIDTokenPayload: Record<string, unknown>;
 }
 
+function isPrivilegedUser(authenticateResponse: BasicUserInfo) {
+
+    if (!authenticateResponse) {
+        return false;
+    }
+    const scopes: string = authenticateResponse.allowedScopes as string;
+
+    if (scopes.includes("urn:mevanprodxghoc:taskmanagementservicemana:manage:create_tasks")) {
+        return true;
+    }
+    return false;
+}
+
 /**
  * Displays the derived Authentication Response from the SDK.
  *
@@ -64,82 +81,121 @@ export const AuthenticationResponse: FunctionComponent<AuthenticationResponsePro
         derivedResponse
     } = props;
 
-    return (
-        <>
-            <div className="json">
-                <JsonViewer
-                    className="asg-json-viewer"
-                    value={ derivedResponse?.authenticateResponse }
-                    enableClipboard={ false }
-                    displayObjectSize={ false }
-                    displayDataTypes={ false }
-                    rootName={ false }
-                    theme="dark"
-                />
-            </div>
-            <h2 className="mb-0 mt-4">ID token</h2>
-            <div className="row">
-                { derivedResponse?.idToken && (
-                    <div className="column">
-                        <h5>
-                            <b>Encoded</b>
-                        </h5>
-                        <div className="code">
-                            <code>
-                                <span className="id-token-0">{ derivedResponse?.idToken[0] }</span>.
-                                <span className="id-token-1">{ derivedResponse?.idToken[1] }</span>.
-                                <span className="id-token-2">{ derivedResponse?.idToken[2] }</span>
-                            </code>
-                        </div>
-                    </div>
-                ) }
-                <div className="column">
-                    <div className="json">
-                        <h5>
-                            <b>Decoded:</b> Header
-                        </h5>
-                        <JsonViewer
-                            className="asg-json-viewer"
-                            value={ derivedResponse?.decodedIdTokenHeader }
-                            enableClipboard={ false }
-                            displayObjectSize={ false }
-                            displayDataTypes={ false }
-                            rootName={ false }
-                            theme="dark"
-                        />
-                    </div>
+    const { getAccessToken } = useAuthContext();
+    const [title, setTitle] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
+    const [assigedUserId, setAssigedUserId] = useState<string>("");
 
-                    <div className="json">
-                        <h5>
-                            <b>Decoded:</b> Payload
-                        </h5>
-                        <JsonViewer
-                            className="asg-json-viewer"
-                            value={ derivedResponse?.decodedIDTokenPayload }
-                            enableClipboard={ false }
-                            displayObjectSize={ false }
-                            displayDataTypes={ false }
-                            rootName={ false }
-                            theme="dark"
-                        />
-                    </div>
-                    <div className="json">
-                        <h5>Signature</h5>
-                        <div className="code">
-                            <code>
-                                HMACSHA256(
-                                <br/>
-                                &nbsp;&nbsp;<span className="id-token-0">base64UrlEncode(
-                                                <span className="id-token-1">header</span>)</span> + "." + <br/>
-                                &nbsp;&nbsp;<span className="id-token-0">base64UrlEncode(
-                                                <span className="id-token-1">payload</span>)</span>,&nbsp;
-                                <span className="id-token-1">your-256-bit-secret</span> <br/>
-                                );
-                            </code>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </>
+    const isPrivileged = isPrivilegedUser(derivedResponse?.authenticateResponse);
+
+    const [value, setValue] = React.useState('1');
+
+    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+        setValue(newValue);
+    };
+
+    const [open, setOpen] = React.useState(false);
+    const [success, setSuccess] = React.useState(false);
+    const [failed, setFailed] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const resetSnackBars = () => {
+        setSuccess(false);
+        setFailed(false);
+    }
+
+    const handleOnSubmit = () => {
+        
+        async function createTask() {
+            const accessToken = await getAccessToken();
+            const payload: Task = {
+                title: title,
+                description: description,
+                assignedUser: assigedUserId
+            };
+            const response = await postTask(accessToken, payload);
+            response.status === 201 ? setSuccess(true) : setFailed(true);
+        }
+        createTask();
+        setOpen(false);
+    };
+
+    return (
+        <Box sx={{ width: '100%', typography: 'body1' }}>
+        <TabContext value={value}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex' }}>
+            <TabList onChange={handleChange} aria-label="lab API tabs example">
+                <Tab label="Assigned Tasks" value="1" />
+                {isPrivileged && 
+                <Tab label="Created Tasks" value="2" />
+                }
+            </TabList>
+            { isPrivileged &&
+            <Button sx={{marginLeft: 'auto'}} onClick={handleClickOpen}>Create Task</Button>
+            }
+            </Box>
+            <TabPanel value="1"><ListTasks opertation="ListAssignedTasks"/></TabPanel>
+            <TabPanel value="2"><ListTasks opertation="ListCreatedTasks"/></TabPanel>
+        </TabContext>
+        <Dialog open={open} onClose={handleClose}>
+            <DialogTitle>Subscribe</DialogTitle>
+            <DialogContent>
+            <DialogContentText>
+                Create a new task.
+            </DialogContentText>
+            <TextField
+                autoFocus
+                margin="dense"
+                id="name"
+                label="Title"
+                type="text"
+                fullWidth
+                variant="standard"
+                onChange={(e) => setTitle(e.target.value)}
+            />
+            <TextField
+                autoFocus
+                margin="dense"
+                id="name"
+                label="Description"
+                type="text"
+                fullWidth
+                variant="standard"
+                onChange={(e) => setDescription(e.target.value)}
+            />
+            <TextField
+                autoFocus
+                margin="dense"
+                id="name"
+                label="Assigned User"
+                type="text"
+                fullWidth
+                variant="standard"
+                onChange={(e) => setAssigedUserId(e.target.value)}
+            />
+            </DialogContent>
+            <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={() => handleOnSubmit()}>Create Task</Button>
+            </DialogActions>
+        </Dialog>
+        <Snackbar open={success} autoHideDuration={6000} onClose={resetSnackBars}>
+            <Alert onClose={resetSnackBars} severity="success" sx={{ width: '100%' }}>
+            Task created successfully!
+            </Alert>
+        </Snackbar>
+        <Snackbar open={failed} autoHideDuration={6000} onClose={resetSnackBars}>
+            <Alert onClose={resetSnackBars} severity="error" sx={{ width: '100%' }}>
+                Task creation failed!
+            </Alert>
+        </Snackbar>
+        </Box>  
     );
 };
