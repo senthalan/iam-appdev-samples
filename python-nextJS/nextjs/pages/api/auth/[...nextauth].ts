@@ -5,11 +5,11 @@ import { randomBytes, randomUUID } from "crypto";
 import { Sequelize } from "sequelize";
 import SequelizeAdapter from "@next-auth/sequelize-adapter";
 
-const sequelize = new Sequelize("sqlite::memory:")
-const adapter = SequelizeAdapter(sequelize)
+// const sequelize = new Sequelize("sqlite::memory:")
+// const adapter = SequelizeAdapter(sequelize)
 
-// Calling sync() is not recommended in production
-sequelize.sync()
+// // Calling sync() is not recommended in production
+// sequelize.sync()
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -24,7 +24,8 @@ export const authOptions: NextAuthOptions = {
             wellKnown: "https://api.asgardeo.io/t/" + process.env.NEXT_PUBLIC_ASGARDEO_ORGANIZATION_NAME + "/oauth2/token/.well-known/openid-configuration",
             authorization: {
                 params:
-                    { scope: "openid profile groups"
+                    { 
+                        scope: "openid profile groups urn:senthalan:backendservicepythonitems:add_item"
                     }
             },
             idToken: true,
@@ -36,14 +37,15 @@ export const authOptions: NextAuthOptions = {
                     id: profile.sub,
                     name: profile.name,
                     email: profile.email,
+                    groups: profile.groups,
                 }
             },
         },
     ],
-    adapter: SequelizeAdapter(sequelize),
+    // adapter: SequelizeAdapter(sequelize),
     secret: process.env.NEXTAUTH_SECRET,
     session: {
-        strategy: "database",
+        strategy: "jwt",
 
         // Seconds - How long until an idle session expires and is no longer valid.
         maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -65,22 +67,16 @@ export const authOptions: NextAuthOptions = {
             return true
         },
         async session({ session, token, user }: any) {
-            console.log("Session : " + JSON.stringify(token));
             if (token) {
                 const decodedAccessToken: any = jwtDecode(token.accessToken);
-    
-                session.user.accessToken = token.accessToken;
-                session.user.idToken = token.idToken;
                 session.user.scope =  decodedAccessToken.scope;
             }
 
             return session;
         },
-        async jwt({ token, user, account, profile, isNewUser }) {
-            console.log("token : " + JSON.stringify(token));
+        async jwt({ token, user, account, profile, isNewUser, session }) {
             if (account) {
                 token.accessToken = account.access_token!
-                token.idToken = account.id_token!
             }            
 
             return token;
