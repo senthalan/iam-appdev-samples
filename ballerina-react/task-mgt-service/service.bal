@@ -18,9 +18,7 @@ jwt:ValidatorConfig validatorConfig = {};
 function init() {
 
     validatorConfig = {
-        issuer: "",
-        audience: "",
-        clockSkew: 0,
+        issuer: "wso2.org/products/am",
         signatureConfig: {
             jwksConfig: {url: "https://gateway.e1-us-east-azure.choreoapis.dev/.wellknown/jwks"}
         }
@@ -138,7 +136,7 @@ function resolveUsernameFromHeaders(http:Headers headers) returns string|http:Ba
 
     log:printInfo("JWT Assertion: " + jwtAssertion);
 
-    [jwt:Header, jwt:Payload] [_, payload] = check jwt:decode(jwtAssertion);
+    jwt:Payload payload = check validateJWT(jwtAssertion);
     string? username = <string?> payload.get("email");
     if (username == ()) {
         http:BadRequest badRequest = {
@@ -152,10 +150,11 @@ function resolveUsernameFromHeaders(http:Headers headers) returns string|http:Ba
     return <string> username;
 }
 
-// function validateJWT(string jwtAssertion) returns jwt:Payload|error {
+function validateJWT(string jwtAssertion) returns jwt:Payload|error {
 
-
-// }
+    jwt:Payload|error payload = jwt:validate(jwtAssertion, validatorConfig);
+    return payload;
+}
 
 function getCreatedTasks(string username) returns  Task[]|error {
     
