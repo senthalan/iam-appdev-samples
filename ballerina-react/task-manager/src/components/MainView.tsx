@@ -143,7 +143,7 @@ export const MainView: FunctionComponent<MainViewPropsInterface> = (
             <TabPanel value="2"><ListTasks opertation="ListCreatedTasks"/></TabPanel>
         </TabContext>
         <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>Subscribe</DialogTitle>
+            <DialogTitle>Create a new task</DialogTitle>
             <DialogContent>
             <DialogContentText>
                 Create a new task.

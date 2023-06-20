@@ -20,20 +20,18 @@ const AppContent: FunctionComponent = (): ReactElement => {
     )
 };
 
-const signInRedirectURL = process.env.REACT_APP_SIGN_IN_REDIRECT_URL as string;
-const signOutRedirectURL = process.env.REACT_APP_SIGN_OUT_REDIRECT_URL as string;
-const clientID = process.env.REACT_APP_CLIENT_ID as string;
-const baseUrl = process.env.REACT_APP_IDP_BASE_URL as string;
-const scopes = process.env.REACT_APP_SCOPES as string;
-
-const scopesArray = scopes?.split(" ");
+const signInRedirectURL = window.config.signInRedirectURL;
+const signOutRedirectURL = window.config.signOutRedirectURL;
+const clientID = window.config.clientID;
+const baseUrl = window.config.baseUrl;
+const scopes = window.config.scopes;
 
 const authConfig = {
     signInRedirectURL: signInRedirectURL,
     signOutRedirectURL: signOutRedirectURL,
     clientID: clientID,
     baseUrl: baseUrl,
-    scope: scopesArray
+    scope: scopes
 };
 
 const App = () => (

@@ -21,8 +21,8 @@ export const ListTasks: FunctionComponent<ListTasksInterface> = (
     const { getAccessToken } = useAuthContext();
     const [tasks, setTasks] = useState<Task[]>([]);
 
-    const manageEndpoint = process.env.REACT_APP_MANAGE_SERVICE_BASE_URL as string;
-    const meEndpoint = process.env.REACT_APP_ME_SERVICE_BASE_URL as string;
+    const manageEndpoint = window.config.manageServiceBaseUrl;
+    const meEndpoint = window.config.meServiceBaseUrl;
 
     useEffect(() => {
         
