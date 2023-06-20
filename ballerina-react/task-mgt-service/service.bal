@@ -1,5 +1,6 @@
 import ballerina/http;
 import ballerina/uuid;
+import ballerina/log;
 import ballerina/jwt;
 
 type Task record {|
@@ -11,6 +12,20 @@ type Task record {|
 
 map<Task> tasks = {};
 map<string> createdTasks = {};
+
+jwt:ValidatorConfig validatorConfig = {};
+
+function init() {
+
+    validatorConfig = {
+        issuer: "",
+        audience: "",
+        clockSkew: 0,
+        signatureConfig: {
+            jwksConfig: {url: "https://gateway.e1-us-east-azure.choreoapis.dev/.wellknown/jwks"}
+        }
+    };
+}
 
 # A service representing a network-accessible API
 # bound to port `9090`.
@@ -121,6 +136,8 @@ function resolveUsernameFromHeaders(http:Headers headers) returns string|http:Ba
         return badRequest;
     }
 
+    log:printInfo("JWT Assertion: " + jwtAssertion);
+
     [jwt:Header, jwt:Payload] [_, payload] = check jwt:decode(jwtAssertion);
     string? username = <string?> payload.get("email");
     if (username == ()) {
@@ -134,6 +151,11 @@ function resolveUsernameFromHeaders(http:Headers headers) returns string|http:Ba
     }
     return <string> username;
 }
+
+// function validateJWT(string jwtAssertion) returns jwt:Payload|error {
+
+
+// }
 
 function getCreatedTasks(string username) returns  Task[]|error {
     
