@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client"
-import { useSession, signIn } from "next-auth/react"
+import { useSession, signIn, signOut } from "next-auth/react"
 import { useEffect, useState } from "react";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
@@ -19,9 +19,7 @@ export default function Component() {
     useEffect(() => {
         console.log("Logging in...", status);
 
-        if (status === 'unauthenticated') {
-            signIn("asgardeo");
-        } else if (status === 'authenticated') {
+        if (status === 'authenticated') {
             console.log("Authenticated ...", status);
             console.log("User : ", data)
             const scopes = data?.user?.scope;
@@ -60,46 +58,81 @@ export default function Component() {
             setItems([...items, candidat]);
     };
 
+    const invokeSignOut = async () => {
+        const idToken = data?.user?.idToken;
+        signOut()
+            .then(
+                () => window.location.assign(
+                    "https://api.asgardeo.io/t/" + process.env.NEXT_PUBLIC_ASGARDEO_ORGANIZATION_NAME +
+                    "/oidc/logout?id_token_hint=" + idToken + "&post_logout_redirect_uri=" +
+                    process.env.NEXT_PUBLIC_ASGARDEO_POST_LOGOUT_REDIRECT_URI + "&state=sign_out_success"
+                )
+            );
+    }
+
     return (
       <div>
-        <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Item List</h1>
-        {(!data) && <p>No Items</p>}
-        {(isAdmin) && (
-            <Popup trigger={<button> Add Item </button>} 
-                position="right center">
-                <form
-        onSubmit={onSubmit}
-        className="w-1/3 justify-center border-2 flex flex-col gap-4 m-4 p-2">
-        <input
-          className="border-2 border-gray-200  p-2"
-          onChange={(e) => setCandidat({name : e.target.value})} 
-        ></input>
 
-        <button
-          className="bg-black text-white text-sm font-medium p-2 rounded "
-          type="submit"
-        >
-          <>Add</>
-        </button>
-      </form>
-           </Popup>
-        )}
-        <ul style={{ listStyle: 'none', paddingLeft: '0' }}>
-        {items.map((item) => (
-          <li 
-          key={item.name}
-          style={{
-            borderColor: 'rgb(44 54 99)',
-            padding: '10px',
-            marginBottom: '10px',
-            borderRadius: '5px',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-          }}>
-            {item.name}
-            </li>
-        ))}
-        
-      </ul>
+        {
+            (status === 'unauthenticated') &&
+            <div className="flex flex-col items-center justify-center h-screen">
+                <h1 className="text-3xl font-bold mb-4">You are not logged in!</h1>
+                <button
+                    className="bg-black text-white text-sm font-medium p-2 rounded "
+                    onClick={() => signIn("asgardeo")}
+                >
+                    <>Sign In</>
+                </button>
+            </div>
+        }
+        {
+            (status === 'authenticated') &&
+            <div>
+                <button className="bg-black text-white text-sm font-medium p-2 rounded "onClick={invokeSignOut}>
+                    Sign Out
+                </button>
+
+                <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Item List</h1>
+                
+                {(!data) && <p>No Items</p>}
+                
+                {(isAdmin) && (
+                    <Popup trigger={<button> Add Item </button>} 
+                        position="right center">
+                        <form
+                            onSubmit={onSubmit}
+                            className="w-1/3 justify-center border-2 flex flex-col gap-4 m-4 p-2">
+                            <input
+                            className="border-2 border-gray-200  p-2"
+                            onChange={(e) => setCandidat({name : e.target.value})} 
+                            ></input>
+                            <button
+                            className="bg-black text-white text-sm font-medium p-2 rounded "
+                            type="submit"
+                            >
+                            <>Add</>
+                            </button>
+                        </form>
+                </Popup>
+                )}
+
+                <ul style={{ listStyle: 'none', paddingLeft: '0' }}>
+                    {items.map((item) => (
+                    <li 
+                    key={item.name}
+                    style={{
+                        borderColor: 'rgb(44 54 99)',
+                        padding: '10px',
+                        marginBottom: '10px',
+                        borderRadius: '5px',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                    }}>
+                        {item.name}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        }
       </div>
     )
 }

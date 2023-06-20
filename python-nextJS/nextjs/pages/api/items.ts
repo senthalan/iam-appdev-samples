@@ -9,6 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
         const tokenObj: any = await getToken({ req, secret });
 
+        console.log("tokenObj: " + JSON.stringify(tokenObj));
         const requestConfig: AxiosRequestConfig = {
             headers: {
                 Authorization: `Bearer ${tokenObj.accessToken}`

@@ -70,6 +70,7 @@ export const authOptions: NextAuthOptions = {
             if (token) {
                 const decodedAccessToken: any = jwtDecode(token.accessToken);
                 session.user.scope =  decodedAccessToken.scope;
+                session.user.idToken = token.idToken;
             }
 
             return session;
@@ -77,6 +78,7 @@ export const authOptions: NextAuthOptions = {
         async jwt({ token, user, account, profile, isNewUser, session }) {
             if (account) {
                 token.accessToken = account.access_token!
+                token.idToken = account.id_token;
             }            
 
             return token;
