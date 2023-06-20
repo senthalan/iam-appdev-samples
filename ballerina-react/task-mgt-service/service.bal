@@ -122,7 +122,7 @@ function resolveUsernameFromHeaders(http:Headers headers) returns string|http:Ba
     }
 
     [jwt:Header, jwt:Payload] [_, payload] = check jwt:decode(jwtAssertion);
-    string? username = payload.sub;
+    string? username = <string?> payload.get("email");
     if (username == ()) {
         http:BadRequest badRequest = {
             body: {
