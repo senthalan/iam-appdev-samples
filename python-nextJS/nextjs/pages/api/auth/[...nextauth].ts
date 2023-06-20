@@ -1,9 +1,11 @@
 
-import NextAuth, { NextAuthOptions } from "next-auth"
+import NextAuth, { NextAuthOptions, Session } from "next-auth"
 import jwtDecode from "jwt-decode";
 import { randomBytes, randomUUID } from "crypto";
 import { Sequelize } from "sequelize";
 import SequelizeAdapter from "@next-auth/sequelize-adapter";
+import { decodeJwt } from 'jose';
+
 
 // const sequelize = new Sequelize("sqlite::memory:")
 // const adapter = SequelizeAdapter(sequelize)
@@ -67,22 +69,52 @@ export const authOptions: NextAuthOptions = {
             return true
         },
         async session({ session, token, user }: any) {
-            if (token) {
-                const decodedAccessToken: any = jwtDecode(token.accessToken);
-                session.user.scope =  decodedAccessToken.scope;
-                session.user.idToken = token.idToken;
+
+            if (!session?.user || !token?.accessToken) {
+                console.error('No accessToken found on token or session');
+                return session;
             }
-
+            console.log("session: " + JSON.stringify(session));
+            console.log("token: " + JSON.stringify(token));
+            session.idToken = token.idToken as string;
+            session.user = token.user;
+            session.user.scope =  token.scope;
+            session.error = token.error as string | undefined;
             return session;
-        },
-        async jwt({ token, user, account, profile, isNewUser, session }) {
-            if (account) {
-                token.accessToken = account.access_token!
-                token.idToken = account.id_token;
-            }            
 
+            // if (token) {
+            //     const decodedAccessToken: any = jwtDecode(token.accessToken);
+            //     session.user.scope =  decodedAccessToken.scope;
+            //     session.idToken = token.idToken;
+            // }
+
+            // return session;
+        },
+        // need to handle token refresh https://next-auth.js.org/tutorials/refresh-token-rotation
+        // return value is added to Session
+        async jwt({ token, user, account, profile, isNewUser, session }) {
+            // Initial sign in
+            if (account && user) {
+                const { id_token, access_token, refresh_token, expires_at } = account;
+                const tokenDecoded = decodeJwt(access_token as string);
+                console.log("tokenDecoded: " + JSON.stringify(tokenDecoded));
+                return {
+                    // save token to session for authenticating to AWS
+                    // https://next-auth.js.org/configuration/callbacks#jwt-callback
+                    accessToken: access_token,
+                    accessTokenExpires: expires_at ? expires_at * 1000 : 0,
+                    refreshToken: refresh_token,
+                    idToken: id_token,
+                    scope: tokenDecoded.scope,
+                    user,
+                };
+            }
+  
+            // already logged-in
+            // refresh access token if needed
+            // return await refreshTokensIfNeeded(session);
             return token;
-        }
+      }
     },
     theme: {
         colorScheme: "light",

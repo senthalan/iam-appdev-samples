@@ -59,7 +59,7 @@ export default function Component() {
     };
 
     const invokeSignOut = async () => {
-        const idToken = data?.user?.idToken;
+        const idToken = data?.idToken;
         signOut()
             .then(
                 () => window.location.assign(
