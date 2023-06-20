@@ -2,6 +2,7 @@ import ballerina/http;
 import ballerina/uuid;
 import ballerina/log;
 import ballerina/jwt;
+import task_mgt_service.config;
 
 type Task record {|
     string id?;
@@ -18,9 +19,9 @@ jwt:ValidatorConfig validatorConfig = {};
 function init() {
 
     validatorConfig = {
-        issuer: "wso2.org/products/am",
+        issuer: config:TOKEN_ISSUER,
         signatureConfig: {
-            jwksConfig: {url: "https://gateway.e1-us-east-azure.choreoapis.dev/.wellknown/jwks"}
+            jwksConfig: {url: config:JWKS_ENDPOINT}
         }
     };
 }
