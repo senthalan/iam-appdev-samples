@@ -70,6 +70,16 @@ export default function Component() {
             );
     }
 
+    const invokeSignUp = async () => {
+        // https://accounts.asgardeo.io/t/senthalan/accountrecoveryendpoint/register.do?client_id=QUbrRSWKpBFMmp3TYjq_Xa9jRZ4a&code_challenge=m-eIDDayHUeyQJbA8ZEmIxLRSgcrppkGZp0OBEd6vZ8&code_challenge_method=S256&commonAuthCallerPath=%2Ft%2Fsenthalan%2Foauth2%2Fauthorize&forceAuth=false&passiveAuth=false&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fauth%2Fcallback%2Fasgardeo&response_type=code&scope=openid+profile+groups+urn%3Asenthalan%3Abackendservicepythonitems%3Aadd_item&state=Akb2Un7fcph2u7P5oHV1K80ZhRWa8VZtFqq_rY8Z5TY&sessionDataKey=5097afa5-ea70-4e89-814f-2fd3e8f25fed&relyingParty=QUbrRSWKpBFMmp3TYjq_Xa9jRZ4a&type=oidc&sp=App+Dev+Exp+Backend_Sandbox&isSaaSApp=false&authenticators=BasicAuthenticator%3ALOCAL&reCaptcha=true&reCaptchaResend=true&callback=https%3A%2F%2Faccounts.asgardeo.io%2Ft%2Fsenthalan%2Fauthenticationendpoint%2Flogin.do%3Fclient_id%3DQUbrRSWKpBFMmp3TYjq_Xa9jRZ4a%26code_challenge%3Dm-eIDDayHUeyQJbA8ZEmIxLRSgcrppkGZp0OBEd6vZ8%26code_challenge_method%3DS256%26commonAuthCallerPath%3D%2Ft%2Fsenthalan%2Foauth2%2Fauthorize%26forceAuth%3Dfalse%26passiveAuth%3Dfalse%26redirect_uri%3Dhttp%3A%2F%2Flocalhost%3A3000%2Fapi%2Fauth%2Fcallback%2Fasgardeo%26response_type%3Dcode%26scope%3Dopenid+profile+groups+urn%3Asenthalan%3Abackendservicepythonitems%3Aadd_item%26state%3DAkb2Un7fcph2u7P5oHV1K80ZhRWa8VZtFqq_rY8Z5TY%26sessionDataKey%3D5097afa5-ea70-4e89-814f-2fd3e8f25fed%26relyingParty%3DQUbrRSWKpBFMmp3TYjq_Xa9jRZ4a%26type%3Doidc%26sp%3DApp+Dev+Exp+Backend_Sandbox%26isSaaSApp%3Dfalse%26authenticators%3DBasicAuthenticator%3ALOCAL%26reCaptcha%3Dtrue%26reCaptchaResend%3Dtrue
+
+        // https://accounts.asgardeo.io/t/tpptenentsorg/accountrecoveryendpoint/register.do?client_id=SfDcIpAGUQXCOdZPPX02DTNaeFwa&sp=TPP_Login
+        window.location.assign(
+                    "https://accounts.asgardeo.io/t/" + process.env.NEXT_PUBLIC_ASGARDEO_ORGANIZATION_NAME +
+                    "/accountrecoveryendpoint/register.do?sp=" + process.env.NEXT_PUBLIC_ASGARDEO_APP_NAME
+            )
+    }
+
     return (
       <div>
 
@@ -82,12 +92,19 @@ export default function Component() {
                     onClick={() => signIn("asgardeo")}
                 >
                     <>Sign In</>
-                </button>
+                </button> 
+                <button
+                    className="bg-black text-white text-sm font-medium p-2 rounded "
+                    onClick={invokeSignUp}
+                >
+                    <>Sign Up</>
+                </button> 
             </div>
         }
         {
             (status === 'authenticated') &&
             <div>
+                <h3>Welcome {data.user.email}</h3>
                 <button className="bg-black text-white text-sm font-medium p-2 rounded "onClick={invokeSignOut}>
                     Sign Out
                 </button>
