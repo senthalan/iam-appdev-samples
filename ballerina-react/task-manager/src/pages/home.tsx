@@ -24,6 +24,7 @@ import { useLocation } from "react-router-dom";
 import { LogoutRequestDenied } from "../components/LogoutRequestDenied";
 import { USER_DENIED_LOGOUT } from "../constants/errors";
 import { MainView } from "../components";
+import Button from "@mui/material/Button";
 
 interface DerivedState {
     authenticateResponse: BasicUserInfo,
@@ -116,7 +117,7 @@ export const HomePage: FunctionComponent = (): ReactElement => {
     };
 
     // If `clientID` is not defined in `config.json`, show a UI warning.
-    if (!process.env.REACT_APP_CLIENT_ID) {
+    if (!window.config.clientID) {
 
         return (
             <div className="content">
@@ -167,14 +168,12 @@ export const HomePage: FunctionComponent = (): ReactElement => {
                             <h4 className={ "spa-app-description" }>
                                 Manage your workplace tasks with Task Manager.
                             </h4>
-                            <button
-                                className="btn primary"
-                                onClick={ () => {
-                                    handleLogin();
-                                } }
-                            >
-                                Login
-                            </button>
+                            <div>
+                            <Button variant="contained" sx={{marginLeft: 'auto'}} onClick={handleLogin}>Login</Button>
+                            </div>
+                            <div>
+                            <Button variant="contained" sx={{marginTop: '30px'}} href="https://accounts.asgardeo.io/t/mevanprodxghoc/accountrecoveryendpoint/register.do?client_id=CqweInNLmQ1hF4gXEZTQcBRGtw0a&sp=Task%20Management%20App_Sandbox">Register</Button>
+                            </div>
                         </div>
                     )
             }
