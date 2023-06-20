@@ -10,11 +10,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const idToken = tokenObj?.idToken;
     console.log("idToken: " + idToken);
-
-    const redirectionUrl = ("https://api.asgardeo.io/t/" + process.env.NEXT_PUBLIC_ASGARDEO_ORGANIZATION_NAME +
-                                "/oidc/logout?id_token_hint=" + idToken + "&post_logout_redirect_uri=" +
-                                process.env.NEXT_PUBLIC_ASGARDEO_POST_LOGOUT_REDIRECT_URI + "&state=sign_out_success"
+    
+    let redirectionUrl = ("https://api.asgardeo.io/t/" + process.env.NEXT_PUBLIC_ASGARDEO_ORGANIZATION_NAME +
+                                "/oidc/logout?post_logout_redirect_uri=" +
+                                process.env.NEXT_PUBLIC_ASGARDEO_POST_LOGOUT_REDIRECT_URI
                             );
-    // res.status(302).setHeader('Location', redirectionUrl)
+    if (idToken) {
+        redirectionUrl += "&id_token_hint=" + idToken;
+    }
     res.status(200).json({"location" : redirectionUrl});
 }

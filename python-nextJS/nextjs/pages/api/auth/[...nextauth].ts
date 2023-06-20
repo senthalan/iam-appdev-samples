@@ -13,6 +13,7 @@ import { decodeJwt } from 'jose';
 // // Calling sync() is not recommended in production
 // sequelize.sync()
 
+const isStoreIdToken = process.env.NEXT_ENABLE_STORING_ID_TOKEN && process.env.NEXT_ENABLE_STORING_ID_TOKEN.toLowerCase() === "true";
 export const authOptions: NextAuthOptions = {
     providers: [
         {
@@ -76,7 +77,10 @@ export const authOptions: NextAuthOptions = {
             }
             console.log("session: " + JSON.stringify(session));
             console.log("token: " + JSON.stringify(token));
-            session.idToken = token.idToken as string;
+            console.log("isStoreIdToken: " + isStoreIdToken)
+            if (isStoreIdToken) {
+                session.idToken = token.idToken as string;
+            }
             session.user = token.user;
             session.user.scope =  token.scope;
             session.error = token.error as string | undefined;
@@ -98,13 +102,19 @@ export const authOptions: NextAuthOptions = {
                 const { id_token, access_token, refresh_token, expires_at } = account;
                 const tokenDecoded = decodeJwt(access_token as string);
                 console.log("tokenDecoded: " + JSON.stringify(tokenDecoded));
+                let stored_id_token = id_token;
+                console.log("isStoreIdToken: " + isStoreIdToken)
+                if (!isStoreIdToken) {
+                    stored_id_token = ""
+                }
+                console.log("stored_id_token: " + stored_id_token)
                 return {
                     // save token to session for authenticating to AWS
                     // https://next-auth.js.org/configuration/callbacks#jwt-callback
                     accessToken: access_token,
                     accessTokenExpires: expires_at ? expires_at * 1000 : 0,
                     refreshToken: refresh_token,
-                    idToken: id_token,
+                    idToken: stored_id_token,
                     scope: tokenDecoded.scope,
                     user,
                 };
