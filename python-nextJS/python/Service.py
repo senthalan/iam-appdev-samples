@@ -1,26 +1,26 @@
 from flask import Flask, render_template, jsonify, request
 import jwt
 import os
+import logging
 
 app = Flask(__name__)
 
-
+logging.basicConfig(level=logging.DEBUG)
 items = []  # In-memory list to store items
 
 # GET API to retrieve all items
 @app.route('/items', methods=['GET'])
 def get_items():
 
-    print('Handling request')
-    print('request.headers : ', request.headers)
+    logging.info('Handling request')
+    logging.info('request.headers : %s', request.headers)
     if request.headers.get('x-jwt-assertion'):
         token = request.headers['x-jwt-assertion']
     else:
         return jsonify({'message': 'Token not found'}), 400
     token_info = decode_access_token(token)
-    print('token_info : ', token_info)
     username = token_info.get('email')
-    print('username : ', username)
+    logging.info('username : ' + username)
     return jsonify(items)
 
 # POST API to add an item
