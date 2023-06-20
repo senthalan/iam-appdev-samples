@@ -107,7 +107,7 @@ export const MainView: FunctionComponent<MainViewPropsInterface> = (
         setFailed(false);
     }
 
-    const manageEndpoint = process.env.REACT_APP_MANAGE_SERVICE_BASE_URL as string;
+    const manageEndpoint = window.config.manageServiceBaseUrl;
 
     const handleOnSubmit = () => {
         
