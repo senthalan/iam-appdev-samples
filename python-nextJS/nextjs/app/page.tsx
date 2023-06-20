@@ -90,6 +90,8 @@ export default function Component() {
                 >
                     <>Sign In</>
                 </button> 
+                <br/>
+                <br/>
                 <button
                     className="bg-black text-white text-sm font-medium p-2 rounded "
                     onClick={invokeSignUp}

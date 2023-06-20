@@ -11,6 +11,8 @@ items = []  # In-memory list to store items
 @app.route('/items', methods=['GET'])
 def get_items():
 
+    print('Handling request')
+    print('request.headers : ', request.headers)
     if request.headers.get('x-jwt-assertion'):
         token = request.headers['x-jwt-assertion']
     else:
