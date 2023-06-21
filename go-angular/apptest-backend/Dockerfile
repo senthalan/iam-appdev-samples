@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . .
 
 # Build the Go application
-RUN go build -o main .
+RUN go build -o people-api .
 
 # Use a small Alpine Linux image as the base image for the final container
 FROM alpine:latest
@@ -17,7 +17,7 @@ FROM alpine:latest
 WORKDIR /app
 
 # Copy the executable from the builder container
-COPY --from=builder /app/apptest-backend .
+COPY --from=builder /app/people-api .
 
 # Build arguments for user/group configurations
 RUN adduser \
@@ -32,4 +32,4 @@ RUN adduser \
 USER 10014
 
 # Set the entrypoint to the executable
-ENTRYPOINT ["./apptest-backend"]
+ENTRYPOINT ["./people-api"]
