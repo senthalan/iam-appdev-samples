@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { AuthModule, LogLevel } from 'angular-auth-oidc-client';
-import { environment } from 'src/environments/environment';
 
 
 @NgModule({
@@ -9,7 +8,7 @@ import { environment } from 'src/environments/environment';
             authority: 'https://api.asgardeo.io/t/',
             redirectUrl: window.location.origin,
             postLogoutRedirectUri: window.location.origin,
-            clientId: environment.clientId,
+            clientId: import.meta.env['NG_APP_CLIENT_ID'],
             scope: "openid profile groups, app_roles email",
             responseType: 'code',
             silentRenew: false,
