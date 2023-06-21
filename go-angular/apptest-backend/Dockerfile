@@ -1,5 +1,5 @@
 # Use the official Go image as the base image
-FROM golang:1.16-alpine
+FROM golang:1.19-alpine AS builder
 
 # switch working directory
 WORKDIR /app
@@ -10,22 +10,26 @@ COPY . .
 # Build the Go application
 RUN go build -o main .
 
-# copy every content from the local file to the image
-COPY . /app
+# Use a small Alpine Linux image as the base image for the final container
+FROM alpine:latest
+
+# switch working directory
+WORKDIR /app
+
+# Copy the executable from the builder container
+COPY --from=builder /app/people-api .
 
 # Build arguments for user/group configurations
-ARG USER=wso2
-ARG USER_ID=10001
-ARG USER_GROUP=wso2
-ARG USER_GROUP_ID=10001
-ARG USER_HOME=/home/${USER}
+RUN adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/nonexistent" \
+    --shell "/sbin/nologin" \
+    --no-create-home \
+    --uid 10014 \
+    "choreo"
+# Use the above created unprivileged user
+USER 10014
 
-USER 10001
-
-VOLUME /tmp
-
-# Expose the port on which the application will run
-EXPOSE 10000
-
-# Define the command to run the application
-CMD ["./main"]
+# Set the entrypoint to the executable
+ENTRYPOINT ["./apptest-backend"]
