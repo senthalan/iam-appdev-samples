@@ -17,7 +17,7 @@ FROM alpine:latest
 WORKDIR /app
 
 # Copy the executable from the builder container
-COPY --from=builder /app/people-api .
+COPY --from=builder /app/apptest-backend .
 
 # Build arguments for user/group configurations
 RUN adduser \
