@@ -13,7 +13,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var jwksEndpoint = "https://api.asgardeo.io/t/iamapptesting/oauth2/jwks"
+var jwksEndpoint = "https://gateway.e1-us-east-azure.choreoapis.dev/.wellknown/jwks"
 
 type Person struct {
 	Name    string `json: "name"`
