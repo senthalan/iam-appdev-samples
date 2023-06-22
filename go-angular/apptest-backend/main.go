@@ -45,6 +45,7 @@ func AllPersons(w http.ResponseWriter, r *http.Request) {
 
 	// Get the JWT from the request header
 	jwtString := r.Header.Get("x-jwt-assertion")
+	fmt.Println(jwtString)
 
 	if validate(jwtString) {
 		json.NewEncoder(w).Encode(people)
@@ -105,13 +106,13 @@ func validate(jwtString string) bool {
 		log.Println("The token is not valid.")
 		cancel()
 		jwks.EndBackground()
-		return true
+		return false
 	}
 
 	log.Println("The token is valid.")
 	cancel()
 	jwks.EndBackground()
-	return false
+	return true
 }
 
 func main() {
