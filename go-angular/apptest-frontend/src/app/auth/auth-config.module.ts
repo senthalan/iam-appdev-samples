@@ -9,7 +9,7 @@ import { AuthModule, LogLevel } from 'angular-auth-oidc-client';
             redirectUrl: window.location.origin,
             postLogoutRedirectUri: window.location.origin,
             clientId: import.meta.env['NG_APP_CLIENT_ID'],
-            scope: "openid profile groups, app_roles email",
+            scope: "openid profile groups, app_roles email urn:iamapptesting:goapipeopleservicedf8:view_all urn:iamapptesting:goapipeopleservicedf8:view_customers",
             responseType: 'code',
             silentRenew: false,
             useRefreshToken: true,
