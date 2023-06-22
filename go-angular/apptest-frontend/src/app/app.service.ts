@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { NG_APP_API_URL } from './app-config';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ export class AppService {
 
   constructor(private http: HttpClient) { }
 
-  rootURL = import.meta.env['NG_APP_API_URL'];
+  rootURL = NG_APP_API_URL;
 
   headers = new HttpHeaders()
     .set('content-type', 'application/json')
