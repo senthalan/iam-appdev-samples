@@ -5,7 +5,7 @@ import { AuthModule, LogLevel } from 'angular-auth-oidc-client';
 @NgModule({
     imports: [AuthModule.forRoot({
         config: {
-            authority: 'https://api.asgardeo.io/t/',
+            authority: import.meta.env['NG_APP_AUTHORITY_URL'],
             redirectUrl: window.location.origin,
             postLogoutRedirectUri: window.location.origin,
             clientId: import.meta.env['NG_APP_CLIENT_ID'],
@@ -14,7 +14,7 @@ import { AuthModule, LogLevel } from 'angular-auth-oidc-client';
             silentRenew: false,
             useRefreshToken: true,
             renewTimeBeforeTokenExpiresInSeconds: 30,
-            authWellknownEndpointUrl: 'https://api.asgardeo.io/t/iamapptesting/oauth2/token/.well-known/openid-configuration',
+            authWellknownEndpointUrl: import.meta.env['NG_APP_WELLKNOWN_URL'],
             logLevel: LogLevel.Debug,
         }
     })],

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { AppService } from './app.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -7,10 +8,12 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 })
 export class AppComponent implements OnInit {
 
-  constructor(public oidcSecurityService: OidcSecurityService) { }
+  constructor(public oidcSecurityService: OidcSecurityService, private appService: AppService) { }
 
   userInfo: any = {};
   isUserAuthenticated: boolean = false;
+
+  peopleData: any[] = [];
 
   ngOnInit() {
     this.oidcSecurityService.checkAuth().subscribe(({ isAuthenticated, userData, idToken, accessToken }) => {
@@ -20,7 +23,9 @@ export class AppComponent implements OnInit {
       console.log('Access Token', accessToken);
       this.isUserAuthenticated = isAuthenticated;
       this.userInfo = userData;
+      localStorage.setItem('access_token', accessToken)
     });
+
   }
 
   login() {
@@ -28,6 +33,21 @@ export class AppComponent implements OnInit {
   }
 
   logout() {
+    localStorage.removeItem('access_token');
     this.oidcSecurityService.logoff().subscribe((result) => console.log(result));
+  }
+
+  fetchCustomer() {
+    this.appService.getCustomer().pipe().subscribe((data: any) => {
+      console.log(data);
+      this.peopleData = data;
+    })
+  }
+
+  fetchPeople() {
+    this.appService.getPeople().pipe().subscribe((data: any) => {
+      console.log(data);
+      this.peopleData = data;
+    })
   }
 }
