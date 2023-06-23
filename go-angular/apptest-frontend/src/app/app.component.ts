@@ -13,15 +13,10 @@ export class AppComponent implements OnInit {
 
   userInfo: any = {};
   isUserAuthenticated: boolean = false;
-
   peopleData: any[] = [];
 
   ngOnInit() {
     this.oidcSecurityService.checkAuth().subscribe(({ isAuthenticated, userData, idToken, accessToken }) => {
-      console.log('app authenticated', isAuthenticated);
-      console.log('app userData', userData);
-      console.log('ID Token', idToken);
-      console.log('Access Token', accessToken);
       this.isUserAuthenticated = isAuthenticated;
       this.userInfo = userData;
       localStorage.setItem('access_token', accessToken)
@@ -52,7 +47,7 @@ export class AppComponent implements OnInit {
     })
   }
 
-  gotoLogin(){
+  gotoSignup(){
     let url = `https://accounts.asgardeo.io/t/iamapptesting/accountrecoveryendpoint/register.do?client_id=${NG_APP_CLIENT_ID}`;
     window.location.href = url;
   }

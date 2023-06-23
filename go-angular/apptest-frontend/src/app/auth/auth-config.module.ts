@@ -9,7 +9,7 @@ import { NG_APP_WELLKNOWN_URL, NG_APP_AUTHORITY_URL, NG_APP_CLIENT_ID } from '..
             redirectUrl: window.location.origin,
             postLogoutRedirectUri: window.location.origin,
             clientId: NG_APP_CLIENT_ID,
-            scope: "openid profile groups, app_roles email urn:iamapptesting:goapipeopleservicedf8:view_all urn:iamapptesting:goapipeopleservicedf8:view_customers",
+            scope: "openid profile groups app_roles email urn:iamapptesting:goapipeopleservicedf8:view_all urn:iamapptesting:goapipeopleservicedf8:view_customers",
             responseType: 'code',
             silentRenew: false,
             useRefreshToken: true,

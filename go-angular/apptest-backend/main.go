@@ -47,11 +47,11 @@ func AllPersons(w http.ResponseWriter, r *http.Request) {
 	jwtString := r.Header.Get("x-jwt-assertion")
 	fmt.Println(jwtString)
 
-	// if validate(jwtString) {
-	json.NewEncoder(w).Encode(people)
-	// } else {
-	// json.NewEncoder(w).Encode("Access token not valid")
-	// }
+	if validate(jwtString) {
+		json.NewEncoder(w).Encode(people)
+	} else {
+		json.NewEncoder(w).Encode("Access token not valid")
+	}
 }
 
 func AllCustomers(w http.ResponseWriter, r *http.Request) {
@@ -61,17 +61,17 @@ func AllCustomers(w http.ResponseWriter, r *http.Request) {
 	jwtString := r.Header.Get("x-jwt-assertion")
 	fmt.Println(jwtString)
 
-	//if validate(jwtString) {
-	customers := []Person{}
-	for _, person := range people {
-		if person.Role == "customer" {
-			customers = append(customers, person)
+	if validate(jwtString) {
+		customers := []Person{}
+		for _, person := range people {
+			if person.Role == "customer" {
+				customers = append(customers, person)
+			}
 		}
+		json.NewEncoder(w).Encode(customers)
+	} else {
+		json.NewEncoder(w).Encode("Access token not valid")
 	}
-	json.NewEncoder(w).Encode(customers)
-	// } else {
-	// 	json.NewEncoder(w).Encode("Access token not valid")
-	// }
 
 }
 
@@ -95,7 +95,7 @@ func validate(jwtString string) bool {
 	if err != nil {
 		log.Fatalf("Failed to create JWKS from resource at the given URL.\nError: %s", err.Error())
 	}
-	fmt.Printf("JWKS:\n%s\n", jwks)
+
 	// Parse the JWT.
 	token, err := jwt.Parse(jwtString, jwks.Keyfunc)
 	if err != nil {
