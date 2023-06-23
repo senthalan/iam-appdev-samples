@@ -83,7 +83,7 @@ export const authOptions: NextAuthOptions = {
             }
             session.user = token.user;
             session.user.scope =  token.scope;
-            session.user.acr =  token.acr;
+            session.user.current_acr =  token.current_acr;
             session.error = token.error as string | undefined;
             return session;
 
@@ -117,7 +117,7 @@ export const authOptions: NextAuthOptions = {
                     refreshToken: refresh_token,
                     idToken: stored_id_token,
                     scope: tokenDecoded.scope,
-                    acr: tokenDecoded.acr,
+                    current_acr: tokenDecoded.current_acr,
                     user,
                 };
             }

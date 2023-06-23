@@ -9,6 +9,7 @@ import axios from "axios";
 export default function Component() {
     const { data, status }: any = useSession();
     const [items , setItems] = useState<any[]>([])
+    const [open, setOpen] = useState(false)
     const [isLoading, setLoading] = useState(false)
     const [isAdmin, setAdmin] = useState(false)
     const [candidat, setCandidat] = useState({
@@ -43,6 +44,15 @@ export default function Component() {
         }
     }
 
+    const openAddItem = () => {
+        if (data?.user?.current_acr === "acr1") {
+            console.log("Stepping up");
+            signIn("asgardeo", {}, {acr_values : "acr2"})
+        } else {
+            setOpen(true)
+        }
+    }
+
     const onSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         if (candidat.name === "")
@@ -56,6 +66,7 @@ export default function Component() {
             body: JSON.stringify(candidat),
             });
             setItems([...items, candidat]);
+            setOpen(false);
     };
 
     const invokeSignOut = async () => {
@@ -86,7 +97,7 @@ export default function Component() {
                 <h1 className="text-3xl font-bold mb-4">You are not logged in!</h1>
                 <button
                     className="bg-black text-white text-sm font-medium p-2 rounded "
-                    onClick={() => signIn("asgardeo")}
+                    onClick={() => signIn("asgardeo", {}, {acr_values : "acr1"})}
                 >
                     <>Sign In</>
                 </button> 
@@ -113,7 +124,14 @@ export default function Component() {
                 {(!data) && <p>No Items</p>}
                 
                 {(isAdmin) && (
-                    <Popup trigger={<button> Add Item </button>} 
+                    <>
+                        <button
+                            className="bg-black text-white text-sm font-medium p-2 rounded "
+                            onClick={openAddItem}
+                        >
+                            <>Add Item</>
+                        </button>
+                    <Popup open={open} 
                         position="right center">
                         <form
                             onSubmit={onSubmit}
@@ -129,7 +147,8 @@ export default function Component() {
                             <>Add</>
                             </button>
                         </form>
-                </Popup>
+                    </Popup>
+                </>
                 )}
 
                 <ul style={{ listStyle: 'none', paddingLeft: '0' }}>
