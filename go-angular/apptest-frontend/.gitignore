@@ -38,7 +38,6 @@ testem.log
 /typings
 /src/environments
 .env
-/src/app/app-config.js
 
 # System files
 .DS_Store
