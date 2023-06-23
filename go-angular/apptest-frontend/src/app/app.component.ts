@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { AppService } from './app.service';
+import { NG_APP_CLIENT_ID } from './app-config';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -49,5 +50,10 @@ export class AppComponent implements OnInit {
       console.log(data);
       this.peopleData = data;
     })
+  }
+
+  gotoLogin(){
+    let url = `https://accounts.asgardeo.io/t/iamapptesting/accountrecoveryendpoint/register.do?client_id=${NG_APP_CLIENT_ID}`;
+    window.location.href = url;
   }
 }
