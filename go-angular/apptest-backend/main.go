@@ -59,7 +59,6 @@ func AllCustomers(w http.ResponseWriter, r *http.Request) {
 
 	// Get the JWT from the request header
 	jwtString := r.Header.Get("x-jwt-assertion")
-	fmt.Println(jwtString)
 
 	if validate(jwtString) {
 		customers := []Person{}
