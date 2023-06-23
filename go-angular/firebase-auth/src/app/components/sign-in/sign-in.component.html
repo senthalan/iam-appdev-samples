@@ -1,0 +1,29 @@
+<section>
+    <div class="container-fluid h-custom">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                <!-- Email input -->
+                <div class="formGroup">
+                    <input type="text" class="formControl" placeholder="Username" #userName required>
+                </div>
+                <!-- Password input -->
+                <div class="formGroup">
+                    <input type="password" class="formControl" placeholder="Password" #userPassword required>
+                </div>
+                <!--Login Button -->
+                <div class="text-center mt-4 pt-2">
+                    <button type="submit" color="primary" class="btn btn-primary btn-lg btn-block"
+                        (click)="authService.Login(userName.value, userPassword.value)">
+                        Login
+                    </button>
+                </div>
+                <!--Redirectio to register components -->
+                <div class="text-center text-lg-start mt-4 pt-2">
+                    <p class="small mt-2 pt-1 mb-0">No account > 
+                        <a routerLink="/register-user" class="link-danger">Register</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
