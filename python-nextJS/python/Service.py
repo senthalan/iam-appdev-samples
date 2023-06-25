@@ -38,6 +38,14 @@ def add_item():
     else:
         return jsonify({'message': 'Token not found'}), 400
     token_info = decode_access_token(token)
+
+    current_acr = token_info.get('current_acr')
+    logging.info('current_acr : ' + current_acr)
+
+    if (current_acr != 'acr2'):
+        return jsonify({'message': 'Access denied'}), 403
+    
+
     username = token_info.get('email')
     logging.info('username : ' + username)
     
