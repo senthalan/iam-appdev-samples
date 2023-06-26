@@ -70,8 +70,10 @@ def get_item_by_name(name):
     if (itemName != name):
         return jsonify({'message': 'Access denied. Tring to access invalid resource.'}), 403
     
-    filtered_items = [item for item in items if item['name'] == name]
-    return jsonify(filtered_items)
+    for item in items:
+        if item['name'] == name:
+            return jsonify(item)
+    return jsonify({'message': 'Item not found'})
 
 
 def decode_access_token(token):
