@@ -65,8 +65,10 @@ def get_item_by_name(name):
     token_info = decode_access_token(token)
     
 
-    username = token_info.get('email')
-    logging.info('username : ' + username)
+    itemName = token_info.get('itemName')
+    logging.info('itemName : ' + itemName)
+    if (itemName != name):
+        return jsonify({'message': 'Access denied. Tring to access invalid resource.'}), 403
     
     filtered_items = [item for item in items if item['name'] == name]
     return jsonify(filtered_items)
