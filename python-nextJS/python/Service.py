@@ -53,6 +53,24 @@ def add_item():
     items.append(item)
     return jsonify({'message': 'Item added successfully'})
 
+@app.route('/items/<name>', methods=['GET'])
+def get_item_by_name(name):
+
+    logging.info('Handling request')
+    logging.info('request.headers : %s', request.headers)
+    if request.headers.get('x-jwt-assertion'):
+        token = request.headers['x-jwt-assertion']
+    else:
+        return jsonify({'message': 'Token not found'}), 400
+    token_info = decode_access_token(token)
+    
+
+    username = token_info.get('email')
+    logging.info('username : ' + username)
+    
+    filtered_items = [item for item in items if item['name'] == name]
+    return jsonify(filtered_items)
+
 
 def decode_access_token(token):
 
