@@ -13,7 +13,9 @@ export default function Component() {
     const [isLoading, setLoading] = useState(false)
     const [isAdmin, setAdmin] = useState(false)
     const [candidat, setCandidat] = useState({
-        name: ""
+        name: "",
+        description: "",
+        quantity: ""
       });
 
 
@@ -55,6 +57,7 @@ export default function Component() {
 
     const onSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
+        console.log("candidat : ", candidat)
         if (candidat.name === "")
           return alert("Item can't be null");
     
@@ -136,16 +139,10 @@ export default function Component() {
                         <form
                             onSubmit={onSubmit}
                             className="w-1/3 justify-center border-2 flex flex-col gap-4 m-4 p-2">
-                            <input
-                            className="border-2 border-gray-200  p-2"
-                            onChange={(e) => setCandidat({name : e.target.value})} 
-                            ></input>
-                            <button
-                            className="bg-black text-white text-sm font-medium p-2 rounded "
-                            type="submit"
-                            >
-                            <>Add</>
-                            </button>
+                            <label htmlFor="name">Name</label><input className="border-2 border-gray-200  p-2" id="name" onChange={(e) => setCandidat((prevState) => ({...prevState, name : e.target.value}))}></input><br/>
+                            <label htmlFor="description">Description</label><input className="border-2 border-gray-200  p-2" id="description" onChange={(e) => setCandidat((prevState) => ({...prevState, description : e.target.value}))}></input><br/>
+                            <label htmlFor="quantity">Quantity</label><input className="border-2 border-gray-200  p-2" id="quantity" onChange={(e) => setCandidat((prevState) => ({...prevState, quantity : e.target.value}))}></input><br/>
+                            <button className="bg-black text-white text-sm font-medium p-2 rounded " type="submit">Add</button>
                         </form>
                     </Popup>
                 </>
@@ -162,7 +159,9 @@ export default function Component() {
                         borderRadius: '5px',
                         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                     }}>
-                        {item.name}
+                        Name        : {item.name}<br/>
+                        Description : {item.description}<br/>
+                        Quantity    : {item.quantity}<br/>
                         </li>
                     ))}
                 </ul>
