@@ -21,10 +21,10 @@ export const authOptions: NextAuthOptions = {
             name: "Asgardeo",
             clientId: process.env.NEXT_PUBLIC_ASGARDEO_CLIENT_ID,
             clientSecret: process.env.NEXT_PUBLIC_ASGARDEO_CLIENT_SECRET,
-            issuer: "https://api.asgardeo.io/t/" + process.env.NEXT_PUBLIC_ASGARDEO_ORGANIZATION_NAME + "/oauth2/token",
-            userinfo: "https://api.asgardeo.io/t/" + process.env.NEXT_PUBLIC_ASGARDEO_ORGANIZATION_NAME + "/oauth2/userinfo",
+            issuer: process.env.NEXT_PUBLIC_CHOREO_STS_URL + "/oauth2/token",
+            userinfo: process.env.NEXT_PUBLIC_CHOREO_STS_URL + "/oauth2/userinfo",
             type: "oauth",
-            wellKnown: "https://api.asgardeo.io/t/" + process.env.NEXT_PUBLIC_ASGARDEO_ORGANIZATION_NAME + "/oauth2/token/.well-known/openid-configuration",
+            wellKnown: process.env.NEXT_PUBLIC_CHOREO_STS_URL + "/oauth2/token/.well-known/openid-configuration",
             authorization: {
                 params:
                     { 
