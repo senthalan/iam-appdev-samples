@@ -31,7 +31,13 @@ export const authOptions: NextAuthOptions = {
                         scope: "openid profile groups urn:senthalan:backendservicepythonitems:add_item"
                     }
             },
-            // idToken: true,
+            token: {
+                params:
+                    { 
+                        scope: "openid profile groups urn:senthalan:backendservicepythonitems:add_item"
+                    }
+            },
+            idToken: true,
             checks: ["pkce", "state"],
             profile(profile) {
                 console.log("profile: " + JSON.stringify(profile));
